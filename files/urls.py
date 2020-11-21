@@ -1,8 +1,8 @@
 from django.urls import path
-from files.views import upload_files_view, get_transactions, detail_transaction
+from files.views import upload_file_view, get_transactions, detail_transaction
 
 file_urlpatterns = [
-    path('upload-file', upload_files_view),
+    path('upload-file', upload_file_view),
 ]
 
 transaction_urlpatterns = [
