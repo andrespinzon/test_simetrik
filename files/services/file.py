@@ -6,6 +6,7 @@ from datetime import date
 from django.db.transaction import atomic as atomic_transaction
 from rest_framework.exceptions import APIException
 from rest_framework.status import HTTP_400_BAD_REQUEST
+from concurrent.futures import ThreadPoolExecutor
 
 from config.extension import engine
 from common.external_apis import MinioAPI
@@ -21,6 +22,15 @@ from files.serializers import TransactionSerializer
 class FileService:
 
     __data: Dict
+
+    def __read_file_and_store_data(self, file_path: str):
+        pd_data = pd.read_csv(file_path)
+        pd_data.to_sql(
+            Transaction.__tablename__,
+            con=engine,
+            if_exists='append',
+            index=False
+        )
 
     def upload_file(self, file: Dict) -> Dict:
         field = 'file'
@@ -42,14 +52,11 @@ class FileService:
                     'created_at': date.today()
                 }
                 FileManager.create(data=file_data)
-                pd_data = pd.read_csv(file_path)
-                print(pd_data)
-                pd_data.to_sql(
-                    Transaction.__tablename__,
-                    con=engine,
-                    if_exists='append',
-                    index=False
-                )
+
+                ex = ThreadPoolExecutor(max_workers=2)
+                process = ex.submit(self.__read_file_and_store_data, file_path)
+                process.result()
+
                 transaction_data = TransactionManager.get_all()
 
                 data = TransactionSerializer(
