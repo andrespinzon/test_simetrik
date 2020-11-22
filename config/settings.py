@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
+from environ import Env
+
+env = Env()
+Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,6 +31,11 @@ SECRET_KEY = ')4mdgh!+n%!h%n^33)&72ae)j$5mf76@05!oiq9o0efnp^w_6h'
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+DB_EXTERNAL = env('DB_EXTERNAL')
+MINIO_ACCESS_KEY = env('MINIO_ACCESS_KEY')
+MINIO_SECRET_KEY = env('MINIO_SECRET_KEY')
+MINIO_BUCKET = env('MINIO_BUCKET')
 
 
 # Application definition

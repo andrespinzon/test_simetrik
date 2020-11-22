@@ -12,20 +12,19 @@ class MinioAPI:
     def __init__(self):
         self.miniClient = Minio(
             'localhost:9000',
-            access_key='AKIAIOSFODNN7EXAMPLE',
-            secret_key='wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY',
+            access_key=settings.MINIO_ACCESS_KEY,
+            secret_key=settings.MINIO_SECRET_KEY,
             secure=False
         )
 
-    def upload_object(self, file, filename):
+    def upload_object(self, file):
         path = default_storage.save(f'tmp/{file.name}', ContentFile(file.read()))
         tmp_file = os.path.join(settings.MEDIA_ROOT, path)
         file_stat = os.stat(path)
-        print(os.getenv('MINIO_BUCKET'))
         with open(tmp_file, 'rb') as data:
             self.miniClient.put_object(
-                bucket_name='simetrik',
-                object_name=filename,
+                bucket_name=settings.MINIO_BUCKET,
+                object_name=str(path[4:]),
                 data=data,
                 length=file_stat.st_size,
                 content_type='text/csv',

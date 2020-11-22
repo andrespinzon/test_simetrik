@@ -32,8 +32,7 @@ class FileService:
 
         service = MinioAPI()
         service.upload_object(
-            file=self.__data['file'],
-            filename='test'
+            file=self.__data['file']
         )
 
 
