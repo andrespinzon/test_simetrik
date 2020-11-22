@@ -7,10 +7,5 @@ from config.extension import Base
 class File(Base):
     __tablename__: str = 'file'
 
-    id: int = Column(Integer, primary_key=True)
-    name: str = Column(String, nullable=False)
+    name: str = Column(String, primary_key=True)
     created_at: datetime = Column(DateTime)
-
-    def __init__(self, name: str):
-        self.name = name
-        self.created_at = datetime.now()

@@ -1,18 +1,21 @@
 from typing import Dict
 import pandas as pd
+from datetime import date
 
 
 from django.db.transaction import atomic as atomic_transaction
 from rest_framework.exceptions import APIException
 from rest_framework.status import HTTP_400_BAD_REQUEST
 
+from config.extension import engine
+from common.external_apis import MinioAPI
 from common.validations import \
     validate_allowed_fields, \
-    validate_allowed_fields_filters, \
     validate_allowed_type_files, \
     validate_required_fields
-
-from common.external_apis import MinioAPI
+from files.managers import FileManager, TransactionManager
+from files.models import Transaction
+from files.serializers import TransactionSerializer
 
 
 class FileService:
@@ -27,16 +30,36 @@ class FileService:
         validate_allowed_fields(data=self.__data, allowed_fields={field})
         validate_allowed_type_files(data=self.__data, field=field, type_files={'csv'})
 
-        print(self.__data)
-        #try:
-
         service = MinioAPI()
-        service.upload_object(
+        file_path = service.upload_object(
             file=self.__data['file']
         )
 
+        try:
+            with atomic_transaction():
+                file_data = {
+                    'name': self.__data['file'].name,
+                    'created_at': date.today()
+                }
+                FileManager.create(data=file_data)
+                pd_data = pd.read_csv(file_path)
+                print(pd_data)
+                pd_data.to_sql(
+                    Transaction.__tablename__,
+                    con=engine,
+                    if_exists='append',
+                    index=False
+                )
+                transaction_data = TransactionManager.get_all()
 
+                data = TransactionSerializer(
+                    instance=transaction_data,
+                    many=True
+                ).data
 
-
-
-
+                return data
+        except:
+            raise APIException(
+                detail='The operation is invalid',
+                code=HTTP_400_BAD_REQUEST
+            )
