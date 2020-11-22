@@ -1,4 +1,4 @@
-CREATE TABLE public.transactions (
+CREATE TABLE public.transaction (
 	transaction_id varchar NULL,
 	transaction_date date NULL,
 	transaction_amount int NULL,
@@ -7,7 +7,7 @@ CREATE TABLE public.transactions (
 );
 
 
-CREATE TABLE public.files (
+CREATE TABLE public.file (
 	"name" varchar NULL,
 	created_at date NULL
 );

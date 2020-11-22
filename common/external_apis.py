@@ -12,7 +12,7 @@ class MinioAPI:
 
     def __init__(self):
         self.miniClient = Minio(
-            'localhost:9000',
+            '127.0.0.1:9000',
             access_key=settings.MINIO_ACCESS_KEY,
             secret_key=settings.MINIO_SECRET_KEY,
             secure=False
