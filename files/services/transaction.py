@@ -8,7 +8,7 @@ from files.serializers import TransactionSerializer
 from common.validations import validate_allowed_fields
 
 
-class TransactionsService:
+class TransactionService:
     __data: Dict
 
     @staticmethod
