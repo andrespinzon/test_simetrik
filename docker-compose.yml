@@ -3,7 +3,6 @@ services:
   web:
     build: .
     container_name: server_test_simetrik
-    command: python manage.py runserver 0.0.0.0:8000
     ports:
       - 8000:8000
     volumes:
@@ -15,8 +14,9 @@ services:
       - DB_NAME=simetrik_db_external
       - DB_EXTERNAL=postgresql://postgres:postgres@db:5432/simetrik_db_external
     depends_on:
-      - minio
-
+      - "db"
+#    command: python manage.py runserver 0.0.0.0:8000
+    command: ["sh", "./wait-for-postgres.sh", "db", "python", "manage.py runserver 0.0.0.0:8000"]
   minio:
     image: minio/minio
     container_name: minio_test_simetrik
@@ -34,7 +34,7 @@ services:
       timeout: 20s
       retries: 3
     depends_on:
-      - db
+      - "db"
 
   db:
     image: mdillon/postgis:9.6-alpine
@@ -47,3 +47,8 @@ services:
       - POSTGRES_DB=simetrik_db_external
     volumes:
       - ./seed/init_db.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "postgres" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10

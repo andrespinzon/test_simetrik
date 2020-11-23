@@ -14,13 +14,8 @@ Dividido en diferentes capas dentro de cada aplicacion:
         
 Para correr el servidor, se debe ejecutar el siguiente comando: 
 
-    docker-compose up
+    docker-compose up -d
 
-NOTA: Por favor ejecutar doble vez el comando docker-compose up,  para que el servidor se ejecute 
-Correctamente, puesto que la primera vez en correrlo ejecuta la migración 
-Lo que hace que el servidor no se pueda conectar a la 
-Bane de datos. 
-        
 Por otra parte se agrego la integracion con MINIO, el cual sirve como servidor de almacenamiento
 este permite faciles integraciones con AWS, Google, entre otras. 
 
