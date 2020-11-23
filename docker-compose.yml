@@ -16,7 +16,7 @@ services:
     image: minio/minio
     container_name: minio_test_simetrik
     volumes:
-      - ./simetrik:/data
+      - /data
     ports:
       - 9000:9000
     environment:
