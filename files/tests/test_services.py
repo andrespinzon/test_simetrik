@@ -1,14 +1,18 @@
-import unittest
-import pandas as pd
+from django.test import TestCase
 
-from config.extension import session
+from config.extension import session, Base, engine
 from files.services import TransactionService
 from files.models import Transaction
+from files.managers import TransactionManager
 
 
-class TestTransactionService(unittest.TestCase):
+class TestTransactionService(TestCase):
 
     def setUp(self) -> None:
+        transactions = TransactionManager.get_all()
+        for transaction in transactions:
+            session.delete(transaction)
+            session.commit()
         self.transaction = Transaction(
             transaction_id='52fba4fa-3a01-4961-a809-e343dd4f9597',
             transaction_date='2020-06-01',
@@ -37,7 +41,3 @@ class TestTransactionService(unittest.TestCase):
             self.transaction.transaction_amount,
             transactions[0]['transaction_amount']
         )
-
-
-if __name__ == '__main__':
-    unittest.main()
