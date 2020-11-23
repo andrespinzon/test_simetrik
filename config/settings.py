@@ -38,7 +38,6 @@ MINIO_SECRET_KEY = env('MINIO_SECRET_KEY')
 MINIO_BUCKET = env('MINIO_BUCKET')
 MINIO_HOST = env('MINIO_HOST')
 
-
 # Application definition
 
 INSTALLED_APPS = [

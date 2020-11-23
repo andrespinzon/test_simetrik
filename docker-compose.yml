@@ -1,16 +1,21 @@
 version: '3'
 services:
-  db:
-    image: mdillon/postgis:9.6-alpine
-    container_name: db_test_simetrik
+  web:
+    build: .
+    container_name: server_test_simetrik
+    command: python manage.py runserver 0.0.0.0:8000
     ports:
-      - 5432:5432
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=simetrik_db_external
+      - 8000:8000
     volumes:
-      - ./seed/init_db.sql:/docker-entrypoint-initdb.d/init.sql
+      - .:/test_simetrik
+    environment:
+      - MINIO_HOST=minio
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=simetrik_db_external
+      - DB_EXTERNAL=postgresql://postgres:postgres@db:5432/simetrik_db_external
+    depends_on:
+      - minio
 
   minio:
     image: minio/minio
@@ -31,19 +36,14 @@ services:
     depends_on:
       - db
 
-  web:
-    build: .
-    container_name: server_test_simetrik
-    command: python manage.py runserver 0.0.0.0:8000
+  db:
+    image: mdillon/postgis:9.6-alpine
+    container_name: db_test_simetrik
     ports:
-      - 8000:8000
-    volumes:
-      - .:/test_simetrik
+      - 5432:5432
     environment:
-      - MINIO_HOST=minio
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_NAME=simetrik_db_external
-      - DB_EXTERNAL=postgresql://postgres:postgres@db:5432/simetrik_db_external
-    depends_on:
-      - minio
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=simetrik_db_external
+    volumes:
+      - ./seed/init_db.sql:/docker-entrypoint-initdb.d/init.sql
