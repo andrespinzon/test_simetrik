@@ -4,3 +4,4 @@
 tmp/
 simetrik/
 .minio.sys/
+.pytest_cache/
