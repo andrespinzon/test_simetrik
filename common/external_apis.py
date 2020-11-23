@@ -17,6 +17,8 @@ class MinioAPI:
             secret_key=settings.MINIO_SECRET_KEY,
             secure=False
         )
+        if not self.miniClient.bucket_exists(settings.MINIO_BUCKET):
+            self.miniClient.make_bucket(settings.MINIO_BUCKET)
 
     def upload_object(self, file) -> str:
 
